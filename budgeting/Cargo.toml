@@ -1,0 +1,12 @@
+[package]
+name = "budgeting"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4.40"
+ddd = { version = "0.1.0", git = "https://github.com/hooliooo/domain_driven_design.git" }
+iso_currency = "0.5.3"
+rust_decimal = "1.37.1"
+rust_decimal_macros = "1.37.1"
+uuid = { version = "1.16.0", features = ["v4", "v7"] }
