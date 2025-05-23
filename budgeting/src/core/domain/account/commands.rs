@@ -10,13 +10,13 @@ use super::AccountId;
 #[derive(Request, ValueObject)]
 pub struct CreateAccount {
     #[field]
-    id: AccountId,
+    pub(crate) id: AccountId,
     #[field]
-    name: String,
+    pub(crate) name: String,
     #[field]
-    amount: Decimal,
+    pub(crate) amount: Decimal,
     #[field]
-    currency: Currency,
+    pub(crate) currency: Currency,
     request_id: RequestId,
     environment: Environment,
     issuer_id: (),
