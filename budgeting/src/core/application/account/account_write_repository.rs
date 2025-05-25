@@ -12,5 +12,4 @@ pub trait AccountWriteRepository: Send + Sync {
     /// # Arguments
     /// * `account` - The [`Account`] to be created
     async fn create(&self, account: Account);
-
 }

@@ -4,18 +4,22 @@ pub mod events;
 use crate::core::domain::account::commands::CreateAccount;
 use crate::core::domain::account::events::CreatedAccount;
 use crate::core::domain::transaction::Transaction;
-use ddd::traits::entity::Entity;
+use ddd::{structs::invariant_error::InvariantError, traits::entity::Entity};
 use iso_currency::Currency;
 use rust_decimal::Decimal;
 use std::collections::HashSet;
 use uuid::Uuid;
+use validator::Validate;
 
-#[derive(ddd::Aggregate, Debug)]
+use super::ResultValidation;
+
+#[derive(ddd::Aggregate, Debug, Validate)]
 pub struct Account {
     #[generate_id(Uuid)]
     #[entity_id]
     id: AccountId,
     #[field]
+    #[validate(length(min = 1, max = 20))]
     name: String,
     #[field]
     amount: Decimal,
@@ -32,14 +36,25 @@ impl Account {
     /// `name`    : The name of the Account
     /// `amount`  : The amount in the Account
     /// `currency`: The currency of the Account
-    fn new(id: Uuid, name: String, amount: Decimal, currency: Currency) -> Self {
-        Self {
+    fn try_new(
+        id: Uuid,
+        name: String,
+        amount: Decimal,
+        currency: Currency,
+    ) -> Result<Self, InvariantError> {
+        let account = Self {
             id: AccountId::new(id),
             name,
             amount,
             currency,
             transactions: HashSet::default(),
+        };
+
+        match account.validate() {
+            Ok(_) => Ok(account),
+            Err(errors) => Err(errors),
         }
+        .transform_errors()
     }
 
     pub fn create(&self) -> CreatedAccount {

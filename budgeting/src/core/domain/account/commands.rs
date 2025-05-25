@@ -1,7 +1,5 @@
 use chrono::{DateTime, Utc};
-use ddd::{
-    Request, ValueObject, enums::environment::Environment, structs::ids::RequestId,
-};
+use ddd::{Request, ValueObject, enums::environment::Environment, structs::ids::RequestId};
 use iso_currency::Currency;
 use rust_decimal::Decimal;
 
