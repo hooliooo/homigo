@@ -8,15 +8,30 @@ use super::AccountId;
 #[derive(Request, ValueObject)]
 pub struct CreateAccount {
     #[field]
-    pub(crate) id: AccountId,
+    pub id: AccountId,
     #[field]
-    pub(crate) name: String,
+    pub name: String,
     #[field]
-    pub(crate) amount: Decimal,
+    pub amount: Decimal,
     #[field]
-    pub(crate) currency: Currency,
+    pub currency: Currency,
     request_id: RequestId,
     environment: Environment,
     issuer_id: (),
     issued_at: DateTime<Utc>,
+}
+
+impl CreateAccount {
+    pub fn new(id: AccountId, name: String, amount: Decimal, currency: Currency) -> Self {
+        Self {
+            id,
+            name,
+            amount,
+            currency,
+            request_id: RequestId::new_random(),
+            environment: Environment::Development,
+            issuer_id: (),
+            issued_at: Utc::now(),
+        }
+    }
 }

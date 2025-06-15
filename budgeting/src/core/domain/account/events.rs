@@ -1,9 +1,10 @@
 use ddd::{
     enums::environment::Environment,
-    structs::ids::{CommandId, EventId},
+    structs::ids::{CommandId, EventId, IssuerId},
 };
 use iso_currency::Currency;
 use rust_decimal::Decimal;
+use uuid::Uuid;
 
 use super::AccountId;
 
@@ -20,7 +21,7 @@ pub struct CreatedAccount {
     command_id: CommandId,
     environment: Environment,
     event_id: EventId,
-    issuer_id: (),
+    issuer_id: IssuerId,
     issued_at: chrono::DateTime<chrono::Utc>,
 }
 
@@ -40,7 +41,7 @@ impl CreatedAccount {
             command_id: CommandId::new(command_id),
             environment: ddd::enums::environment::Environment::Development,
             event_id: EventId::new_random(),
-            issuer_id: (),
+            issuer_id: IssuerId::new(Uuid::new_v4()),
             issued_at: chrono::Utc::now(),
         }
     }

@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
 use account_write_repository::AccountWriteRepository;
+use ddd::structs::invariant_error::InvariantError;
+use ddd::traits::request::Request;
 use ddd::traits::use_case::UseCase;
 
 use crate::core::domain::account::Account;
@@ -18,16 +20,12 @@ pub struct AddAccountUseCase {
 
 impl UseCase for AddAccountUseCase {
     type Request = CreateAccount;
-    type Response = ();
+    type Response = Result<(), InvariantError>;
 
-    fn handle(&self, request: CreateAccount) -> impl Future<Output = Self::Response> + Send {
-        let result: Result<Account, ()> = request.try_into();
-        match result {
-            Ok(account) => account.create(),
-            Err(error) => {
-                panic!("Error, could not create account")
-            }
-        };
-        async {}
+    async fn handle(&self, request: CreateAccount) -> Self::Response {
+        let request_id = *request.request_id();
+        let account: Account = request.try_into()?;
+        let event = account.create(request_id);
+        Ok(())
     }
 }

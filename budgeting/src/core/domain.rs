@@ -6,9 +6,9 @@ pub mod transaction;
 use ddd::structs::error_detail::ErrorDetail;
 use ddd::structs::invariant_error::InvariantError;
 use ddd::traits::aggregate::Aggregate;
+use std::borrow::Cow;
 use std::collections::HashSet;
-use validator::ValidationErrors;
-use validator::ValidationErrorsKind;
+use validator::{ValidationError, ValidationErrors, ValidationErrorsKind};
 
 trait ResultValidation<T: Aggregate> {
     fn transform_errors(self) -> Result<T, InvariantError>;
@@ -48,4 +48,17 @@ impl<T: Aggregate> ResultValidation<T> for Result<T, ValidationErrors> {
             InvariantError::new(errors)
         })
     }
+}
+
+pub fn validate_whitespace(string: &str) -> Result<(), ValidationError> {
+    if string.is_empty() {
+        return Err(ValidationError::new("whitespace").with_message(Cow::from("is blank")));
+    }
+
+    if string.trim().len() != string.len() {
+        return Err(ValidationError::new("leading_or_trailing_whitespace")
+            .with_message(Cow::from("has leading or trailing whitespace")));
+    }
+
+    Ok(())
 }
